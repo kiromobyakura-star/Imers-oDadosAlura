@@ -127,9 +127,12 @@ with col_graf2:
             labels={'usd': 'Faixa salarial (USD)', 'count': ''}
         )
         grafico_hist.update_layout(
-            title_x=0.1,
-            font=PLOTLY_FONT
-        )
+    title_x=0.1,
+    title_font_size=20,
+    font_size=20,
+    height=600,  # <- mesma altura do primeiro gráfico
+    margin=dict(t=60, b=60)
+)
         st.plotly_chart(grafico_hist, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico de distribuição.")
