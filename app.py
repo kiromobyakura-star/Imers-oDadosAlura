@@ -89,24 +89,31 @@ col_graf1, col_graf2 = st.columns(2)
 with col_graf1:
     if not df_filtrado.empty:
         top_cargos = df_filtrado.groupby('cargo')['usd'].mean().nlargest(10).sort_values(ascending=True).reset_index()
-        grafico_cargos = px.bar(
-            top_cargos,
-            x='usd',
-            y='cargo',
-            orientation='h',
-            title="Top 10 cargos por salário médio",
-            labels={'usd': 'Média salarial anual (USD)', 'cargo': ''}
+        
+        import plotly.graph_objects as go
+        
+        fig_cargos = go.Figure(go.Bar(
+            x=top_cargos['usd'],
+            y=top_cargos['cargo'],
+            orientation='h'
+        ))
+        
+        fig_cargos.update_layout(
+            title=dict(text="Top 10 cargos por salário médio", font=dict(size=26)),
+            xaxis=dict(
+                title=dict(text="Média salarial anual (USD)", font=dict(size=24)),
+                tickfont=dict(size=24)
+            ),
+            yaxis=dict(
+                tickfont=dict(size=24),
+                categoryorder='total ascending'
+            ),
+            font=dict(size=24),
+            height=600,
+            margin=dict(l=350, r=20, t=60, b=60)
         )
-        grafico_cargos.update_traces(textfont_size=60)
-        grafico_cargos.update_xaxes(tickfont_size=60, title_font_size=60)
-        grafico_cargos.update_yaxes(tickfont_size=60, title_font_size=60, categoryorder='total ascending')
-        grafico_cargos.update_layout(
-            title_x=0.1,
-            title_font_size=60,
-            font_size=60,
-            margin=dict(l=300)
-        )
-        st.plotly_chart(grafico_cargos, use_container_width=True)
+        
+        st.plotly_chart(fig_cargos, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico de cargos.")
 
