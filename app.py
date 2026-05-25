@@ -99,16 +99,16 @@ with col_graf1:
         ))
         
         fig_cargos.update_layout(
-            title=dict(text="Top 10 cargos por salário médio", font=dict(size=26)),
+            title=dict(text="Top 10 cargos por salário médio", font=dict(size=20)),
             xaxis=dict(
-                title=dict(text="Média salarial anual (USD)", font=dict(size=24)),
-                tickfont=dict(size=24)
+                title=dict(text="Média salarial anual (USD)", font=dict(size=20)),
+                tickfont=dict(size=20)
             ),
             yaxis=dict(
-                tickfont=dict(size=24),
+                tickfont=dict(size=20),
                 categoryorder='total ascending'
             ),
-            font=dict(size=24),
+            font=dict(size=20),
             height=600,
             margin=dict(l=350, r=20, t=60, b=60)
         )
