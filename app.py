@@ -3,16 +3,26 @@ import pandas as pd
 import plotly.express as px
 
 # --- Configuração da Página ---
-# Define o título da página, o ícone e o layout para ocupar a largura inteira.
 st.set_page_config(
     page_title="Dashboard de Salários na Área de Dados",
     page_icon="📊",
     layout="wide",
 )
 
+# --- CSS global: fonte tamanho 18 na tabela (st.dataframe) ---
+st.markdown("""
+    <style>
+        /* Aumenta fonte da tabela do Streamlit (dataframe) */
+        [data-testid="stDataFrame"] * {
+            font-size: 18px !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Configuração padrão de fonte para todos os gráficos Plotly ---
+PLOTLY_FONT = dict(size=18)
+
 # --- Carregamento dos dados ---
-# Preferência: arquivo local do repositório (evita falhas de rede no deploy).
-# Fallback: URL raw do GitHub (útil caso você queira centralizar/atualizar o dataset externamente).
 DATA_URL = "https://raw.githubusercontent.com/vqrca/dashboard_salarios_dados/main/dados-imersao.csv"
 LOCAL_PATH = "dados-imersao.csv"
 
@@ -28,24 +38,19 @@ df = load_data()
 # --- Barra Lateral (Filtros) ---
 st.sidebar.header("🔍 Filtros")
 
-# Filtro de Ano
 anos_disponiveis = sorted(df['ano'].unique())
 anos_selecionados = st.sidebar.multiselect("Ano", anos_disponiveis, default=anos_disponiveis)
 
-# Filtro de Senioridade
 senioridades_disponiveis = sorted(df['senioridade'].unique())
 senioridades_selecionadas = st.sidebar.multiselect("Senioridade", senioridades_disponiveis, default=senioridades_disponiveis)
 
-# Filtro por Tipo de Contrato
 contratos_disponiveis = sorted(df['contrato'].unique())
 contratos_selecionados = st.sidebar.multiselect("Tipo de Contrato", contratos_disponiveis, default=contratos_disponiveis)
 
-# Filtro por Tamanho da Empresa
 tamanhos_disponiveis = sorted(df['tamanho_empresa'].unique())
 tamanhos_selecionados = st.sidebar.multiselect("Tamanho da Empresa", tamanhos_disponiveis, default=tamanhos_disponiveis)
 
 # --- Filtragem do DataFrame ---
-# O dataframe principal é filtrado com base nas seleções feitas na barra lateral.
 df_filtrado = df[
     (df['ano'].isin(anos_selecionados)) &
     (df['senioridade'].isin(senioridades_selecionadas)) &
@@ -92,7 +97,11 @@ with col_graf1:
             title="Top 10 cargos por salário médio",
             labels={'usd': 'Média salarial anual (USD)', 'cargo': ''}
         )
-        grafico_cargos.update_layout(title_x=0.1, yaxis={'categoryorder':'total ascending'})
+        grafico_cargos.update_layout(
+            title_x=0.1,
+            font=PLOTLY_FONT,
+            yaxis={'categoryorder': 'total ascending'}
+        )
         st.plotly_chart(grafico_cargos, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico de cargos.")
@@ -106,7 +115,10 @@ with col_graf2:
             title="Distribuição de salários anuais",
             labels={'usd': 'Faixa salarial (USD)', 'count': ''}
         )
-        grafico_hist.update_layout(title_x=0.1)
+        grafico_hist.update_layout(
+            title_x=0.1,
+            font=PLOTLY_FONT
+        )
         st.plotly_chart(grafico_hist, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico de distribuição.")
@@ -124,8 +136,11 @@ with col_graf3:
             title='Proporção dos tipos de trabalho',
             hole=0.5
         )
-        grafico_remoto.update_traces(textinfo='percent+label')
-        grafico_remoto.update_layout(title_x=0.1)
+        grafico_remoto.update_traces(textinfo='percent+label', textfont_size=18)
+        grafico_remoto.update_layout(
+            title_x=0.1,
+            font=PLOTLY_FONT
+        )
         st.plotly_chart(grafico_remoto, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico dos tipos de trabalho.")
@@ -134,13 +149,18 @@ with col_graf4:
     if not df_filtrado.empty:
         df_ds = df_filtrado[df_filtrado['cargo'] == 'Data Scientist']
         media_ds_pais = df_ds.groupby('residencia_iso3')['usd'].mean().reset_index()
-        grafico_paises = px.choropleth(media_ds_pais,
+        grafico_paises = px.choropleth(
+            media_ds_pais,
             locations='residencia_iso3',
             color='usd',
             color_continuous_scale='rdylgn',
             title='Salário médio de Cientista de Dados por país',
-            labels={'usd': 'Salário médio (USD)', 'residencia_iso3': 'País'})
-        grafico_paises.update_layout(title_x=0.1)
+            labels={'usd': 'Salário médio (USD)', 'residencia_iso3': 'País'}
+        )
+        grafico_paises.update_layout(
+            title_x=0.1,
+            font=PLOTLY_FONT
+        )
         st.plotly_chart(grafico_paises, use_container_width=True)
     else:
         st.warning("Nenhum dado para exibir no gráfico de países.")
