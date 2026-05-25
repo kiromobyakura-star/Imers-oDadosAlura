@@ -97,13 +97,13 @@ with col_graf1:
             title="Top 10 cargos por salário médio",
             labels={'usd': 'Média salarial anual (USD)', 'cargo': ''}
         )
-        grafico_cargos.update_traces(textfont_size=24)
-        grafico_cargos.update_xaxes(tickfont_size=24, title_font_size=24)
-        grafico_cargos.update_yaxes(tickfont_size=24, title_font_size=24, categoryorder='total ascending')
+        grafico_cargos.update_traces(textfont_size=60)
+        grafico_cargos.update_xaxes(tickfont_size=60, title_font_size=60)
+        grafico_cargos.update_yaxes(tickfont_size=60, title_font_size=60, categoryorder='total ascending')
         grafico_cargos.update_layout(
             title_x=0.1,
-            title_font_size=24,
-            font_size=24,
+            title_font_size=60,
+            font_size=60,
             margin=dict(l=300)
         )
         st.plotly_chart(grafico_cargos, use_container_width=True)
